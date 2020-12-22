@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "./types";
+import { Orientation, Vector2, Vector3 } from "./types";
 import * as math from "mathjs";
 
 // Should 2 points be considered "close enough"
@@ -35,7 +35,7 @@ export function vectorDiff(a: Vector3, b: Vector3): Vector3 {
 
 // Returns the index of the highest value of a vector
 // TODO: try and make this function less bad
-export function getMaxIndex(v: Vector3): number {
+export function getMaxIndex(v: Array<number>): number {
     let max = v[0];
     let index = 0;
 
@@ -59,4 +59,14 @@ export function tableify(elements: TableData): string {
         return `<tr>${content}</tr>`;
     }).join("");
     return `<table>${rows}</table>`;
+}
+
+// Returns the orientation (x,y,z) between 2 vectors
+export function getOrientation(v1: Vector3, v2: Vector3): Orientation {
+    const baseOrientations: Array<Orientation> = ["x", "y", "z"];
+    const fingerDiff = vectorDiff(v1, v2);
+    const maxIndex = getMaxIndex(fingerDiff.map(Math.abs));
+
+    return baseOrientations[maxIndex];
+
 }

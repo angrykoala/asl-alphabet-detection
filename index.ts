@@ -13,7 +13,9 @@ handposePromise.then(() => {
 
 async function getPrediction(element: HTMLElement): Promise<HandPrediction | undefined> {
     const model = await handposePromise;
-    const predictions = await model.estimateHands(element);
+    const predictions = await model.estimateHands(element, {
+        flipHorizontal: true // For mirrored videos
+    });
     return predictions[0] as Promise<HandPrediction>;
 }
 
@@ -33,6 +35,7 @@ async function getHandpose(): Promise<void> {
     if (!prediction) return console.log("No Hands Detected");
 
     const hand = new Hand(prediction);
+    const handData = [["Size", "Orientation"], [hand.size, hand.orientation]];
 
     const titles = ["-", "Length", "Relative Length", "Extended", "Orientation"];
     const proximityMatrix = getFingerMatrix(prediction.annotations, 40);
@@ -42,17 +45,16 @@ async function getHandpose(): Promise<void> {
 
     const lettersTable = [["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"], letterMethods.map((method) => method(hand))];
 
-    infoElement.innerHTML = tableify([titles, ...fingersData]) + tableify(proximityMatrix) + tableify(lettersTable);
+    infoElement.innerHTML = tableify([titles, ...fingersData]) + tableify(handData) + tableify(proximityMatrix) + tableify(lettersTable);
 }
 
 function isA(hand: Hand): boolean {
     const areOtherFingersClosed = hand.map([1, 2, 3, 4], (f) => !f.isExtended);
     const thumb = hand.getFinger(5);
-    if (!areOtherFingersClosed || !thumb.isExtended) return false;
 
     const thumbNotTouchingOtherFingers = hand.map([1, 2, 3, 4], (finger) => !thumb.isTouchingTip(finger));
     const fingersNotTouchingThumb = hand.map([2, 3, 4], (finger) => !finger.isTouching(thumb));
-    if (!thumbNotTouchingOtherFingers || !fingersNotTouchingThumb) return false;
+    if (!areOtherFingersClosed || !thumb.isExtended || !thumbNotTouchingOtherFingers || !fingersNotTouchingThumb) return false;
     else return true;
 }
 
@@ -128,7 +130,6 @@ function isI(hand: Hand): boolean {
     const pinky = hand.getFinger(4);
     const isPinkyInPosition = pinky.isExtended && pinky.orientation === 'y';
     const fingersClosed = hand.map([1, 2, 3], (f) => !f.isExtended);
-    // 5 touch 3?
     return isPinkyInPosition && fingersClosed;
 }
 
@@ -136,9 +137,7 @@ function isJ(hand: Hand): boolean {
     // TODO: take movement into account
     const pinky = hand.getFinger(4);
     const isPinkyInHorizontalPosition = pinky.isExtended && pinky.orientation === 'x';
-    // const isPinkyInVerticalPosition = pinky.isExtended && pinky.orientation === 'x';
     const fingersClosed = hand.map([1, 2, 3], (f) => !f.isExtended);
-    // 5 touch 3?
     return isPinkyInHorizontalPosition && fingersClosed;
 }
 

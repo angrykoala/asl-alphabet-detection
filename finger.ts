@@ -1,8 +1,5 @@
-import { FingerLandmarks, Vector3 } from "./types";
-import { areAligned, areTouching, getDistance, getMaxIndex, vectorDiff } from "./utils";
-
-export type FingerOrientation = "x" | "y" | "z";
-const ORIENTATIONS: FingerOrientation[] = ["x", "y", "z"];
+import { FingerLandmarks, Orientation, Vector3 } from "./types";
+import { areAligned, areTouching, getDistance, getOrientation } from "./utils";
 
 export class Finger {
     public readonly name;
@@ -10,7 +7,7 @@ export class Finger {
     public readonly length: number;
     public readonly relativeLength: number;
     public readonly isExtended: boolean;
-    public readonly orientation: FingerOrientation;
+    public readonly orientation: Orientation;
 
     private isThumb: boolean;
 
@@ -59,9 +56,7 @@ export class Finger {
         return extended && aligned;
     }
 
-    private calculateOrientation(): FingerOrientation {
-        const fingerDiff = vectorDiff(this.fingerTip, this.fingerBase);
-        const maxIndex = getMaxIndex(fingerDiff);
-        return ORIENTATIONS[maxIndex];
+    private calculateOrientation(): Orientation {
+        return getOrientation(this.fingerTip, this.fingerBase);
     }
 }
