@@ -1,0 +1,61 @@
+<html>
+
+<head>
+
+  <!--Load the Handpose model script along with its dependencies -->
+  <script src="https://unpkg.com/@tensorflow/tfjs-core@2.1.0/dist/tf-core.js"></script>
+  <script src="https://unpkg.com/@tensorflow/tfjs-converter@2.1.0/dist/tf-converter.js"></script>
+
+  <!-- You must explicitly require a TF.js backend if you're not using the tfs union bundle. -->
+  <script src="https://unpkg.com/@tensorflow/tfjs-backend-webgl@2.1.0/dist/tf-backend-webgl.js"></script>
+  <!--Load the custom script used for this example -->
+  <script src="https://unpkg.com/@tensorflow-models/handpose@0.0.6/dist/handpose.js"></script>
+  <script src="./index.ts"></script>
+</head>
+
+<body>
+  <div id="container">
+      <!-- <p>Loading</p> -->
+      <div id="info"><p>Loading</p></div>
+    <video width=640 height=480 autoplay id="movie"> </video>
+
+    <script>
+      video = document.getElementById("movie");
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+            video: true
+          })
+          .then(function(stream) {
+            video.srcObject = stream;
+          });
+      }
+
+      main();
+
+      function main() {
+        if (video.readyState == 4) {
+          console.log("video is ready for processing..");
+          getHandposeMain();
+        } else {
+          console.log("nope, not loaded yet..");
+          setTimeout(main, 1000 / 30);
+        }
+      }
+    </script>
+</body>
+<style>
+  video {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    position: fixed;
+    margin: auto;
+  }
+
+  table, th, td {
+    border-collapse: collapse;
+    border: 1px solid black;
+
+  }
+</style>
+
+</html>

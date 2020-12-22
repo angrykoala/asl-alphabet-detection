@@ -1,0 +1,34 @@
+{
+  "name": "asl-alphabet-detection",
+  "version": "0.1.0",
+  "description": "A simple prototype of ASL alphabet and general hand pose detection with browser camera",
+  "main": "index.js",
+  "dependencies": {
+    "@tensorflow-models/handpose": "0.0.6",
+    "@tensorflow/tfjs-backend-webgl": "^2.8.0",
+    "@tensorflow/tfjs-converter": "^2.8.0",
+    "@tensorflow/tfjs-core": "^2.8.0",
+    "mathjs": "^8.1.0"
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "devDependencies": {
+    "@types/mathjs": "^6.0.9",
+    "parcel": "^1.12.4",
+    "typescript": "^4.1.3"
+  },
+  "scripts": {
+    "start": "parcel index.html -d public/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angrykoala/asl-alphabet-detection.git"
+  },
+  "author": "angrykoala <angrykoala@outlook.es>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/angrykoala/asl-alphabet-detection/issues"
+  },
+  "homepage": "https://github.com/angrykoala/asl-alphabet-detection#readme"
+}
