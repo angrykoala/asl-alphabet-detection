@@ -20,3 +20,5 @@ The whole system runs in a frontend webpage. It requires nodejs and npm to run
 The whole system is built around the classes `Hand` and `Finger` that provides a set of utilities for handpose detection.
 
 The file `index.ts` uses these classes to infer asl alphabet and update a webpage real-time from a camera capture.
+
+Fingers in the hand are numbered from 1 (index finger) to 5 (thumb)

@@ -24,7 +24,7 @@ export class Hand {
     }
 
     // Validates a condition against all fingers in the mask, returns true if all fingers fullfill the condition
-    public map(mask: Array<FingerIndex>, condition: (f: Finger) => boolean): boolean {
+    public mapAnd(mask: Array<FingerIndex>, condition: (f: Finger) => boolean): boolean {
         for (let i = 1; i < 5; i++) {
             if (mask.includes(i as FingerIndex)) {
                 if (!condition(this.getFinger(i as FingerIndex))) return false;

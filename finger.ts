@@ -30,6 +30,7 @@ export class Finger {
         return this.isThumb ? this.landmarks[1] : this.landmarks[0];
     }
 
+    // This finger tip is in contact with other finger
     public isTouching(otherFinger: Finger): boolean {
         const tip = this.fingerTip;
         for (const v of otherFinger.landmarks) {
@@ -44,6 +45,16 @@ export class Finger {
 
     public isTouchingBase(otherFinger: Finger): boolean {
         return areTouching(this.fingerTip, otherFinger.fingerBase);
+    }
+
+    public isInContactWith(otherFinger: Finger): boolean {
+        // TODO: ignore thumb last landmark in both fingers
+        for (const l1 of this.landmarks) {
+            for (const l2 of otherFinger.landmarks) {
+                if (areTouching(l1, l2)) return true;
+            }
+        }
+        return false;
     }
 
     private fingerLength(): number {
