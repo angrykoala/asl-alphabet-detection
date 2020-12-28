@@ -4,6 +4,10 @@ export type Vector3 = [number, number, number];
 export type Vector2 = [number, number];
 
 export type Orientation = "x" | "y" | "z";
+export type SignedOrientation = {
+    orientation: Orientation,
+    sign: boolean
+};
 
 export type FingerLandmarks = [Vector3, Vector3, Vector3, Vector3]; // From base to tip
 

@@ -1,5 +1,5 @@
 import { Finger } from "./finger";
-import { FingerLandmarks, HandPrediction, Orientation } from "./types";
+import { FingerLandmarks, HandPrediction, Orientation, SignedOrientation } from "./types";
 import { getDistance, getOrientation } from "./utils";
 
 export type HandFingers = HandVector<Finger>;
@@ -11,11 +11,14 @@ export class Hand {
     public readonly size: number;
     public readonly fingers: HandFingers;
     public readonly orientation: Orientation;
+    public readonly orientationSign: boolean;
 
     constructor(prediction: HandPrediction) {
         this.size = getDistance(prediction.boundingBox.bottomRight, prediction.boundingBox.topLeft);
         this.fingers = this.createFingers(prediction);
-        this.orientation = this.calculateOrientation();
+        const fullOrientation = this.calculateOrientation();
+        this.orientation = fullOrientation.orientation;
+        this.orientationSign = fullOrientation.sign;
     }
 
     // Returns finger from 1 to 5 (1 being the index and 5 the thumb)
@@ -52,7 +55,7 @@ export class Hand {
         }) as HandFingers;
     }
 
-    private calculateOrientation(): Orientation {
+    private calculateOrientation(): SignedOrientation {
         const index = this.getFinger(1);
         const pinky = this.getFinger(4);
         return getOrientation(index.fingerBase, pinky.fingerBase);

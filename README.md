@@ -22,3 +22,19 @@ The whole system is built around the classes `Hand` and `Finger` that provides a
 The file `index.ts` uses these classes to infer asl alphabet and update a webpage real-time from a camera capture.
 
 Fingers in the hand are numbered from 1 (index finger) to 5 (thumb)
+
+
+### Handpose
+
+A handpose may be defined following the following variables:
+
+
+
+
+Orientation Details
+* +X -> Right
+* -X -> Left
+* +Y -> Up
+* -Y -> Down
+* +Z -> Forward
+* -Z -> Backward

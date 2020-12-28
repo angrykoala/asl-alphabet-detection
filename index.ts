@@ -35,7 +35,7 @@ async function getHandpose(): Promise<void> {
     if (!prediction) return console.log("No Hands Detected");
 
     const hand = new Hand(prediction);
-    const handData = [["Size", "Orientation"], [hand.size, hand.orientation]];
+    const handData = [["Size", "Orientation", "orientationSign"], [hand.size, hand.orientation, hand.orientationSign]];
 
     const titles = ["-", "Length", "Relative Length", "Extended", "Orientation"];
     const proximityMatrix = getFingerMatrix(prediction.annotations, 40);
@@ -192,7 +192,6 @@ function isP(hand: Hand): boolean {
     const thumbTouching = hand.mapAnd([1, 2], f => thumb.isInContactWith(f));
     return fingersExtended && fingersOrientation && thumbTouching;
 }
-
 
 // For testing purposes
 function getFingerData(finger: Finger): Array<string | number | boolean> {

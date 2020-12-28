@@ -1,4 +1,4 @@
-import { Orientation, Vector2, Vector3 } from "./types";
+import { Orientation, SignedOrientation, Vector2, Vector3 } from "./types";
 import * as math from "mathjs";
 
 // Should 2 points be considered "close enough"
@@ -62,11 +62,13 @@ export function tableify(elements: TableData): string {
 }
 
 // Returns the orientation (x,y,z) between 2 vectors
-export function getOrientation(v1: Vector3, v2: Vector3): Orientation {
+export function getOrientation(v1: Vector3, v2: Vector3): SignedOrientation {
     const baseOrientations: Array<Orientation> = ["x", "y", "z"];
     const fingerDiff = vectorDiff(v1, v2);
     const maxIndex = getMaxIndex(fingerDiff.map(Math.abs));
 
-    return baseOrientations[maxIndex];
-
+    return {
+        orientation: baseOrientations[maxIndex],
+        sign: fingerDiff[maxIndex] >= 0
+    };
 }
