@@ -2,7 +2,7 @@ import { Finger } from "./finger";
 import { getFingerMatrix } from "./finger_matrix";
 import { Hand } from "./hand";
 import { HandPrediction } from "./types";
-import { areTouching, tableify } from "./utils";
+import { tableify } from "./utils";
 
 const handposePromise = (window as any).handpose.load({
 }) as Promise<any>;
@@ -10,6 +10,7 @@ const handposePromise = (window as any).handpose.load({
 handposePromise.then(() => {
     console.log("handpose ready");
 });
+
 
 async function getPrediction(element: HTMLElement): Promise<HandPrediction | undefined> {
     const model = await handposePromise;
@@ -41,20 +42,21 @@ async function getHandpose(): Promise<void> {
     const proximityMatrix = getFingerMatrix(prediction.annotations, 40);
     const fingersData = hand.fingers.map(getFingerData);
 
-    const letterMethods = [isA, isB, isC, isD, isE, isF, isG, isH, isI, isJ, isK, isL, isM, isN, isO, isP];
+    const letterMethods = [isA, isB, isC, isD, isE, isF, isG, isH, isI, isJ, isK, isL, isM, isN, isO, isP, isQ, isR, isS, isT, isU];
 
-    const lettersTable = [["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"], letterMethods.map((method) => method(hand))];
+    const lettersTable = [["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U"], letterMethods.map((method) => method(hand))];
 
     infoElement.innerHTML = tableify([titles, ...fingersData]) + tableify(handData) + tableify(proximityMatrix) + tableify(lettersTable);
 }
 
 function isA(hand: Hand): boolean {
-    const areOtherFingersClosed = hand.mapAnd([1, 2, 3, 4], (f) => !f.isExtended);
     const thumb = hand.getFinger(5);
 
+    const isHandOriented = hand.orientation === 'x';
+    const areOtherFingersClosed = hand.mapAnd([1, 2, 3, 4], (f) => !f.isExtended);
     const thumbNotTouchingOtherFingers = hand.mapAnd([1, 2, 3, 4], (finger) => !thumb.isTouchingTip(finger));
     const fingersNotTouchingThumb = hand.mapAnd([2, 3, 4], (finger) => !finger.isTouching(thumb));
-    if (!areOtherFingersClosed || !thumb.isExtended || !thumbNotTouchingOtherFingers || !fingersNotTouchingThumb) return false;
+    if (!areOtherFingersClosed || !thumb.isExtended || !thumbNotTouchingOtherFingers || !fingersNotTouchingThumb || !isHandOriented) return false;
     else return true;
 }
 
@@ -93,6 +95,7 @@ function isD(hand: Hand): boolean {
 }
 
 function isE(hand: Hand): boolean {
+    // TODO: improve
     const thumb = hand.getFinger(5);
     // TODO: index not extended
     const fingersClosed = hand.mapAnd([1, 2, 3, 4], (finger) => !finger.isExtended);
@@ -147,7 +150,8 @@ function isK(hand: Hand): boolean {
     const fingersExtended = hand.mapAnd([1, 2, 5], (f) => f.isExtended);
     const fingersOrientation = hand.mapAnd([1, 5], (f) => f.orientation === 'y');
     const thumbTouching = hand.mapAnd([1, 2], f => thumb.isInContactWith(f));
-    return fingersExtended && fingersOrientation && thumbTouching;
+    const indexTouching = hand.getFinger(1).isTouchingTip(hand.getFinger(2));
+    return fingersExtended && fingersOrientation && thumbTouching && !indexTouching;
 }
 
 function isL(hand: Hand): boolean {
@@ -189,8 +193,55 @@ function isP(hand: Hand): boolean {
     const thumb = hand.getFinger(5);
     const fingersExtended = hand.mapAnd([1, 2, 5], (f) => f.isExtended);
     const fingersOrientation = hand.mapAnd([2], (f) => f.orientation === 'y');
-    const thumbTouching = hand.mapAnd([1, 2], f => thumb.isInContactWith(f));
-    return fingersExtended && fingersOrientation && thumbTouching;
+    // const thumbTouching = hand.mapAnd([1, 2], f => thumb.isInContactWith(f));
+    return fingersExtended && fingersOrientation //&& thumbTouching;
+}
+
+
+function isQ(hand: Hand): boolean {
+    const indexExtended = hand.getFinger(1).isExtended;
+    const thumbExtended = hand.getFinger(5).isExtended;
+    const otherClosed = hand.mapAnd([2, 3, 4], (f) => !f.isExtended);
+    const verticalFingers = hand.mapAnd([1, 5], (f) => f.orientation === 'y');
+
+    return indexExtended && thumbExtended && otherClosed && verticalFingers;
+}
+function isR(hand: Hand): boolean {
+    const fingersExtended = hand.mapAnd([1, 2], (f) => f.isExtended);
+    const touching = hand.getFinger(1).isTouchingTip(hand.getFinger(2));
+    const otherClosed = hand.mapAnd([3, 4], (f) => !f.isExtended);
+    const verticalFingers = hand.mapAnd([1, 2], (f) => f.orientation === 'y');
+
+    return fingersExtended && touching && otherClosed && verticalFingers;
+}
+function isS(hand: Hand): boolean {
+    // TODO: Check something different than N
+    const thumb = hand.getFinger(5);
+    const fingersClosed = hand.mapAnd([1, 2, 3, 4], f => !f.isExtended);
+    const touchingThumb = hand.mapAnd([1, 2], f => f.isInContactWith(thumb));
+    const handOrientation = hand.orientation === 'x';
+    const thumbExtended = thumb.isExtended
+    return fingersClosed && touchingThumb && handOrientation && !thumbExtended;
+}
+
+function isT(hand: Hand): boolean {
+    const thumb = hand.getFinger(5);
+    const fingersClosed = hand.mapAnd([1, 2, 3, 4], f => !f.isExtended);
+    const touchingThumb = hand.mapAnd([1, 2], f => f.isInContactWith(thumb));
+    const thumbOrientation = thumb.orientation === 'y';
+    const thumbExtended = thumb.isExtended
+    const handOrientation = hand.orientation === 'x';
+    return fingersClosed && touchingThumb && thumbOrientation && handOrientation && thumbExtended;
+}
+
+function isU(hand: Hand): boolean {
+    const notExtendedFingers = hand.mapAnd([3, 4, 5], f => !f.isExtended);
+    const extendedFingers = hand.mapAnd([1, 2], f => f.isExtended);
+    const fingerOrientation = hand.mapAnd([1, 2], f => f.orientation === 'y');
+
+    return notExtendedFingers &&
+        extendedFingers &&
+        fingerOrientation
 }
 
 // For testing purposes

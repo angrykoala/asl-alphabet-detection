@@ -2,7 +2,7 @@ import { FingerLandmarks, Orientation, Vector3 } from "./types";
 import { areAligned, areTouching, getDistance, getOrientation } from "./utils";
 
 export class Finger {
-    public readonly name;
+    public readonly name: string;
     public readonly landmarks: FingerLandmarks;
     public readonly length: number;
     public readonly relativeLength: number;
@@ -68,6 +68,6 @@ export class Finger {
     }
 
     private calculateOrientation(): Orientation {
-        return getOrientation(this.fingerTip, this.fingerBase);
+        return getOrientation(this.fingerTip, this.fingerBase).orientation;
     }
 }

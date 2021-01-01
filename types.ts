@@ -27,3 +27,16 @@ export type HandPrediction = {
     handInViewConfidence: number,
     landmarks: Array<Vector3>, // 21 landmarks (https://handsondeeplearning.com/wp-content/uploads/2020/05/Hand-Image_with-annotated-points-1.png)
 };
+
+
+
+type OrientationOption = Orientation | {
+    axis: Orientation,
+    direction: boolean
+}
+export type HandposeConfig = {
+    hand: {
+        orientation: OrientationOption,
+        
+    }
+}
